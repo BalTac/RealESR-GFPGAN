@@ -1,27 +1,27 @@
 # Documentation & Ingestion Workflow
 
-> Sources: LLM-Wiki Methodology, 2026-11-03
-> Raw: [Project Spec](../../raw/notes/project-spec.md)
-> Updated: 2026-11-03
+> Sources: LLM-Wiki Methodology, 2026-11-03  
+> Raw: [Project Spec](../../raw/notes/project-spec.md)  
+> Updated: 2026-11-03  
 
 ## Overview
 
-Procedura standard per acquisire nuove informazioni, specifiche tecniche o codice e mantenerli allineati sia nella wiki persistente che nel grafo di conoscenza.
+Standard operating procedure for ingesting new technical documentation, research papers, and architectural changes while preserving synchronization across the persistent wiki and structural knowledge graph.
 
-## Ciclo di Ingestione (Step-by-Step)
+## Ingestion Lifecycle (Step-by-Step)
 
-1. **Archiviazione Fonte Immutabile**:
-   - Salvare il documento, schema o testo sorgente nella cartella appropriata dentro `raw/` (es. `raw/specs/feature-x.md`).
-2. **Sintesi ed Estrazione Concetti**:
-   - Creare o aggiornare l'articolo corrispondente in `wiki/<area>/<nome>.md`.
-   - Includere la citazione della sorgente nel frontmatter `> Raw: [...]`.
-3. **Aggiornamento Indice e Log**:
-   - Aggiungere/aggiornare la voce in `wiki/index.md`.
-   - Registrare l'operazione in `wiki/log.md` (append-only con data).
-4. **Sincronizzazione Graphify**:
-   - Eseguire `graphify update .` per integrare la nuova documentazione e i riferimenti nel knowledge graph navigabile.
-5. **Verifica Evidenze (Audit)**:
-   - Eseguire periodicamente `python .agents/skills/llm-wiki/scripts/check_evidence.py` per verificare che numeri, metriche e affermazioni cardine corrispondano alle fonti originali.
+1. **Immutable Source Storage**:
+   - Save the raw reference document, benchmark report, or specification in the appropriate subfolder within `raw/` (e.g., `raw/specs/feature-x.md`).
+2. **Concept Synthesis & Structuring**:
+   - Create or update the corresponding article in `wiki/<domain>/<title>.md`.
+   - Provide the source provenance header `> Raw: [...]`.
+3. **Index & Log Synchronization**:
+   - Update entries in `wiki/index.md`.
+   - Record the operation chronologically in `wiki/log.md` (append-only).
+4. **Graphify Synchronization**:
+   - Run `graphify update .` to index new documentation nodes, links, and relationships.
+5. **Evidence Audit**:
+   - Periodically execute evidence checks to ensure all metrics, formulas, and statements remain grounded in source files.
 
 ## See Also
 - [System Architecture](../architecture/system-overview.md)

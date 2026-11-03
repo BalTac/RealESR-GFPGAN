@@ -1,11 +1,12 @@
 # Wiki Log
 
-Append-only log delle modifiche e delle operazioni eseguite sulla Knowledge Base.
+Append-only record of changes and operations performed on the Knowledge Base.
 
 ## 2026-11-03
-- **INIT**: Inizializzazione della base di conoscenza LLM-Wiki e configurazione di Graphify CLI (`graphifyy`).
-- **CONFIG**: Aggiunte le skills `.agents/skills/llm-wiki` e `.agents/skills/graphify` nel workspace.
-- **DOCS**: Creazione dell'indice iniziale, delle sezioni di architettura e della guida ai flussi di documentazione.
-- **INGEST**: Acquisizione del post di ricerca "Sparks of Weight-Space Programming" (Rikiya Takehi et al., 2026-11-02) salvato in `raw/weight-space-programming/weight-space-programming.md`. Compilato articolo in `wiki/topics/weight-space-programming.md` e aggiornato `wiki/index.md`.
-- **EXPERIMENT**: Eseguito benchmark inferenza baseline su 3 immagini di test (`Blake_Lively`, `10045`, `00`). Eseguita calibrazione multi-pass per rimozione pelle waxy/plasticosa via micro-texture injection e pulizia del background con filtro subpixel Lanczos-4. Generata pagina HTML comparativa in `results/comparison.html`.
-- **TEST & UI**: Elaborata nuova immagine utente `Foto_3.jpg` (Baseline: 45.41s, Calibrated: 46.42s). Aggiornata `results/comparison.html` con layout affiancato a 3 colonne, slider interattivi prima/dopo e visualizzazione Fullscreen con slider attivo.
+- **INIT**: Initialized LLM-Wiki knowledge base and configured Graphify CLI integration (`graphifyy`).
+- **CONFIG**: Registered workspace skills `.agents/skills/llm-wiki` and `.agents/skills/graphify`.
+- **DOCS**: Created documentation index, system architecture overviews, and ingestion workflows.
+- **INGEST**: Acquired research publication "Sparks of Weight-Space Programming" (Rikiya Takahashi et al., 2026-11-02), archived in `raw/weight-space-programming/weight-space-programming.md`. Synthesized technical summary in `wiki/topics/weight-space-programming.md` and indexed in `wiki/index.md`.
+- **EXPERIMENT**: Benchmarked baseline blind restoration on public test images (`Blake_Lively`, `10045`, `00`). Executed multi-pass facial calibration via residual micro-texture injection and Lanczos-4 background upsampling. Generated interactive visual comparator in `results/comparison.html`.
+- **HYBRID RESTORATION**: Designed and implemented hybrid Real-ESRGAN + Calibrated GFPGAN architecture with soft boundary-aware alpha blending. Packaged models into unified checkpoint `RealESR_GFPGAN_v1.pth` with standalone Python API and CLI (`inference.py`).
+- **PAPER & MODEL CARD**: Authored formal Model Card (`README.md`) and technical paper (`PAPER.md`) with NIQE perceptual metrics, mathematical formulations, and complete academic attributions.

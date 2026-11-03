@@ -1,10 +1,11 @@
 # Project Specification & Architecture Notes
 
-Data: 2026-11-03
-Autore: Balta / DeepMind Pair Programming Session
+Date: 2026-11-03  
+Authors: Project Team / Antigravity Pair Programming Session  
 
-## Requisiti e Obiettivi
-1. Adozione congiunta della skill `llm-wiki` e della skill / tool `graphifyy`.
-2. Costruzione di una documentazione modulare, persistente ed esaustiva per il progetto GFPGAN.
-3. Mantenimento del tracciamento di dipendenze (AST code parsing e graph query) integrato con una base di conoscenza ad articoli Markdown sintetizzati.
-4. Mantenimento della separazione tra sorgenti immutabili (`raw/`), base di conoscenza compilata (`wiki/`) e grafo di interconnessione (`graphify-out/`).
+## Requirements and Objectives
+1. Joint integration of `llm-wiki` and `graphify` methodologies for continuous technical documentation.
+2. Construction of modular, persistent, and verifiable documentation for the image restoration pipeline.
+3. Continuous code dependency tracking (AST parsing and graph queries) connected to structured Markdown synthesis articles.
+4. Clean architectural separation between immutable raw sources (`raw/`), compiled knowledge base (`wiki/`), and structural knowledge graph (`graphify-out/`).
+5. Unified hybrid restoration architecture (RealESR-GFPGAN) combining RRDBNet scene super-resolution with calibrated facial priors.

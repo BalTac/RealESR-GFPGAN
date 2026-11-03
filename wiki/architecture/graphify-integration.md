@@ -1,44 +1,44 @@
 # Graphify Integration
 
-> Sources: Graphify CLI & Antigravity Setup, 2026-11-03
-> Raw: [Project Spec](../../raw/notes/project-spec.md)
-> Updated: 2026-11-03
+> Sources: Graphify CLI & Antigravity Setup, 2026-11-03  
+> Raw: [Project Spec](../../raw/notes/project-spec.md)  
+> Updated: 2026-11-03  
 
 ## Overview
 
-Integrazione dello strumento **Graphify** (`graphifyy`) nel progetto per costruire automaticamente un knowledge graph strutturale di codice e documenti.
+Integration of the **Graphify** tool (`graphifyy`) within the repository to automatically generate and maintain an AST-derived structural knowledge graph of code and technical documentation.
 
-## Configurazione e Comandi
+## Setup and Commands
 
-Lo strumento è installato nell'ambiente gestito tramite `uv` ed è registrato sia come skill che come regola/workflow:
-- **Eseguibile**: `C:\Users\balta\.local\bin\graphify.exe`
-- **Skill Workspace**: `.agents/skills/graphify/SKILL.md`
-- **Regola Workspace**: `.agents/rules/graphify.md`
-- **Workflow Workspace**: `.agents/workflows/graphify.md`
+The tool is integrated into the workspace environment and registered as a skill, workspace rule, and workflow:
+- **Executable**: `C:\Users\balta\.local\bin\graphify.exe`
+- **Workspace Skill**: `.agents/skills/graphify/SKILL.md`
+- **Workspace Rule**: `.agents/rules/graphify.md`
+- **Workspace Workflow**: `.agents/workflows/graphify.md`
 
-### Comandi Principali
+### Core CLI Commands
 
 ```bash
-# Costruzione iniziale del grafo sull'intero progetto
+# Full graph generation across the entire codebase
 graphify .
 
-# Aggiornamento incrementale (ri-estrazione solo file modificati)
+# Incremental update (AST re-extraction for modified files only)
 graphify update .
 
-# Interrogazione mirata del grafo per una domanda architetturale
-graphify query "<domanda o concetto>"
+# Scoped query for architectural and code questions
+graphify query "<question or concept>"
 
-# Ricerca del cammino più breve tra due entità/moduli
-graphify path "<ModuloA>" "<ModuloB>"
+# Shortest dependency path between two modules or entities
+graphify path "<ModuleA>" "<ModuleB>"
 
-# Spiegazione dettagliata di un nodo e delle sue dipendenze
-graphify explain "<NomeComponente>"
+# Detailed concept breakdown and caller/callee inspection
+graphify explain "<ComponentName>"
 ```
 
-## Output Generati (`graphify-out/`)
-- `graph.json`: grafo in formato serializzato GraphRAG.
-- `graph.html`: interfaccia visiva interattiva con mappa delle dipendenze.
-- `GRAPH_REPORT.md`: sintesi leggibile delle comunità individuate e dei nodi cardine (*god nodes*).
+## Generated Outputs (`graphify-out/`)
+- `graph.json`: Serialized GraphRAG knowledge graph.
+- `graph.html`: Interactive visual graph browser displaying module clusters and dependencies.
+- `GRAPH_REPORT.md`: Architectural summary highlighting community clusters and central entrypoints (*god nodes*).
 
 ## See Also
 - [System Architecture](system-overview.md)

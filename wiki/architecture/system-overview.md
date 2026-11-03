@@ -1,19 +1,19 @@
 # System Architecture
 
-> Sources: Project Team, 2026-11-03
-> Raw: [Project Spec](../../raw/notes/project-spec.md)
-> Updated: 2026-11-03
+> Sources: Project Team, 2026-11-03  
+> Raw: [Project Spec](../../raw/notes/project-spec.md)  
+> Updated: 2026-11-03  
 
 ## Overview
 
-Panoramica strutturale dei layer del progetto e del flusso di lavoro combinato tra codice, documentazione e grafo di conoscenza.
+Structural overview of the project layers and the unified workflow connecting code, technical documentation, and structural knowledge graphs.
 
-## Schema di Integrazione
+## Integration Diagram
 
 ```
                         +---------------------------+
                         |      Input / Sources      |
-                        | (Documenti, Papers, Code) |
+                        | (Documents, Papers, Code) |
                         +-------------+-------------+
                                       |
                        +--------------+--------------+
@@ -21,10 +21,10 @@ Panoramica strutturale dei layer del progetto e del flusso di lavoro combinato t
                        v                             v
            +-----------------------+     +-----------------------+
            |       LLM-Wiki        |     |       Graphify        |
-           |  (Conoscenza/Doc)     |     | (Grafo AST & Schema)  |
+           |  (Knowledge / Docs)   |     | (AST Graph & Schema)  |
            |                       |     |                       |
-           | • raw/ (Fonti)        |     | • graph.json          |
-           | • wiki/ (Sintesi)     |     | • graph.html          |
+           | • raw/ (Sources)      |     | • graph.json          |
+           | • wiki/ (Synthesis)   |     | • graph.html          |
            | • index.md & log.md   |     | • GRAPH_REPORT.md     |
            +-----------+-----------+     +-----------+-----------+
                        |                             |
@@ -33,14 +33,15 @@ Panoramica strutturale dei layer del progetto e del flusso di lavoro combinato t
                                       v
                         +---------------------------+
                         |     AI Agent & User       |
-                        | Navigazione e Sviluppo    |
+                        |  Navigation & Development |
                         +---------------------------+
 ```
 
-## Componenti Chiave
-- **Sorgenti Raw (`raw/`)**: Conservano le specifiche, i paper e i log di sessione senza alterazioni.
-- **Wiki Sintetica (`wiki/`)**: Documenti in markdown interconnessi consultabili sia dall'assistente che dall'utente.
-- **Knowledge Graph (`graphify-out/`)**: Risolve istantaneamente le relazioni strutturali, le chiamate tra funzioni e l'impatto delle modifiche.
+## Key Components
+- **Raw Sources (`raw/`)**: Preserves technical specifications, benchmark logs, and foundational research papers without modification.
+- **Synthesized Wiki (`wiki/`)**: Interconnected, human- and machine-readable Markdown documentation articles.
+- **Knowledge Graph (`graphify-out/`)**: Graph representation mapping code dependencies, module calls, and structural impact analysis.
+- **Unified Restoration Engine (`realesr_gfpgan/`)**: Standalone hybrid restoration pipeline integrating RRDBNet super-resolution with calibrated generative facial priors and seamless alpha-mask compositing.
 
 ## See Also
 - [Project Roadmap & Scope](../topics/roadmap.md)

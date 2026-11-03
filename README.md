@@ -1,9 +1,14 @@
+<div align="center">
+
+![RealESR-GFPGAN Banner](assets/banner.png)
+
 # RealESR-GFPGAN: Unified Photorealistic Face & Scene Super-Resolution
 
-[![Hugging Face Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model%20Card-yellow)](https://huggingface.co/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/user/realesr-gfpgan?style=social)](https://github.com/)
+[![GitHub Stars](https://img.shields.io/github/stars/BalTac/RealESR-GFPGAN?style=social)](https://github.com/BalTac/RealESR-GFPGAN)
+
+</div>
 
 > **Abstract:** Generative facial priors such as GFPGAN v1.4 (StyleGAN2-based) excel at hallucinating facial details from severely degraded inputs, but suffer from two systemic artifacts: **(1)** unnatural, overly smooth "porcelain/plastic" skin texture due to latent prior bias, and **(2)** deconvolution checkerboard seams and poor background fidelity caused by naive bicubic or transposed-conv upsampling. Conversely, super-resolution backbones like Real-ESRGAN (RRDBNet) excel at continuous scene reconstruction (hair, textiles, architectural textures) but lack specialized facial semantic priors.  
 > We propose **RealESR-GFPGAN**, an end-to-end unified restoration architecture that synergistically fuses a 23-block RRDBNet background super-resolver with a calibrated facial prior via **adaptive high-frequency micro-texture injection** and **boundary-aware soft alpha composite**. The entire pipeline is bundled into a single standalone checkpoint (`RealESR_GFPGAN_v1.pth`).
@@ -192,7 +197,7 @@ This project builds upon foundational breakthroughs in generative priors, weight
   author = {Deep Learning Image Restoration Group},
   title  = {RealESR-GFPGAN: Unified Photorealistic Face and Scene Restoration},
   year   = {2026},
-  url    = {https://github.com/your-username/realesr-gfpgan}
+  url    = {https://github.com/BalTac/RealESR-GFPGAN}
 }
 ```
 
