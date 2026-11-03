@@ -128,14 +128,71 @@ The repository includes a responsive zero-dependency visual comparator ([`result
 
 ---
 
-## BibTeX Citation
+## Acknowledgments & Attributions
+
+This project builds upon foundational breakthroughs in generative priors, weight calibration, and blind super-resolution:
+
+* **Weight Space Programming & Calibration Inspiration:**
+  The concept of manipulating neural network weights and calibration vectors without full retraining is inspired by the research and insights in [**Weight Space Programming** by Rikiya Takahashi](https://rikiyat.github.io/blog/weight-space-programming/). Their work on navigating weight spaces, parameter interpolation, and model editing provided the foundation for our approach to balancing latent prior strength with micro-texture preservation.
+* **GFPGAN (Generative Facial Prior GAN):**
+  Developed by Tencent ARC Lab.
+  > Xintao Wang, Yu Li, Honglun Zhang, Ying Shan. *"Towards Real-World Blind Face Restoration with Generative Facial Prior."* CVPR 2021.  
+  > GitHub: [TencentARC/GFPGAN](https://github.com/TencentARC/GFPGAN)
+* **Real-ESRGAN:**
+  Developed by Xintao Wang et al.
+  > Xintao Wang, Liangbin Xie, Chao Dong, Ying Shan. *"Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data."* ICCV Workshops 2021.  
+  > GitHub: [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN)
+* **CodeFormer:**
+  Developed by S-Lab, Nanyang Technological University.
+  > Shangchen Zhou, Kelvin C.K. Chan, Chongyi Li, Chen Change Loy. *"Towards Robust Blind Face Restoration with Codebook Lookup Transformer."* NeurIPS 2022.  
+  > GitHub: [sczhou/CodeFormer](https://github.com/sczhou/CodeFormer)
+* **BasicSR:**
+  Open-source image and video restoration toolbox by XPixel Group.  
+  GitHub: [XPixelGroup/BasicSR](https://github.com/XPixelGroup/BasicSR)
+* **Facelib & RetinaFace:**
+  Face detection and 5-point landmark alignment powered by InsightFace / DeepInsight.
+
+---
+
+## References & BibTeX Citation
 
 ```bibtex
+@article{takahashi2024weightspace,
+  title   = {Weight Space Programming},
+  author  = {Takahashi, Rikiya},
+  journal = {Rikiya Takahashi Blog},
+  year    = {2024},
+  url     = {https://rikiyat.github.io/blog/weight-space-programming/}
+}
+
+@inproceedings{wang2021gfpgan,
+  title     = {Towards Real-World Blind Face Restoration with Generative Facial Prior},
+  author    = {Wang, Xintao and Li, Yu and Zhang, Honglun and Shan, Ying},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {9168--9178},
+  year      = {2021}
+}
+
+@inproceedings{wang2021realesrgan,
+  title     = {Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data},
+  author    = {Wang, Xintao and Xie, Liangbin and Dong, Chao and Shan, Ying},
+  booktitle = {IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)},
+  pages     = {1505--1513},
+  year      = {2021}
+}
+
+@inproceedings{zhou2022codeformer,
+  title     = {Towards Robust Blind Face Restoration with Codebook Lookup Transformer},
+  author    = {Zhou, Shangchen and Chan, Kelvin C.K. and Li, Chongyi and Loy, Chen Change},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2022}
+}
+
 @software{realesr_gfpgan_2026,
   author = {Deep Learning Image Restoration Group},
-  title = {RealESR-GFPGAN: Unified Photorealistic Face and Scene Restoration},
-  year = {2026},
-  url = {https://github.com/your-username/realesr-gfpgan}
+  title  = {RealESR-GFPGAN: Unified Photorealistic Face and Scene Restoration},
+  year   = {2026},
+  url    = {https://github.com/your-username/realesr-gfpgan}
 }
 ```
 
@@ -143,4 +200,9 @@ The repository includes a responsive zero-dependency visual comparator ([`result
 
 ## License
 
-This project is licensed under the Apache 2.0 License. Pre-trained weights inherit licenses from GFPGAN (Tencent ARC) and Real-ESRGAN (Xintao Wang).
+This project is licensed under the [Apache 2.0 License](LICENSE).
+
+Pre-trained weights and upstream submodules inherit their respective licenses:
+* **GFPGAN Checkpoint:** Apache 2.0 License / Non-commercial for FFHQ-trained priors (Tencent ARC).
+* **Real-ESRGAN Checkpoint:** BSD 3-Clause License (Xintao Wang).
+* **Facelib / RetinaFace:** MIT License / Non-commercial research.

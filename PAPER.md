@@ -111,6 +111,18 @@ RealESR-GFPGAN achieves a **28.3% improvement** in perceptual naturalness over B
 
 ---
 
-## 4. Conclusion
+## 4. Conclusion & Acknowledgments
 
 RealESR-GFPGAN bridges the gap between whole-image super-resolution and domain-specific generative facial priors. By combining a 23-block RRDBNet background engine with a calibrated facial restorer and boundary-aware alpha compositing, it delivers artifact-free, photorealistic restorations packaged into a single unified checkpoint for production deployment.
+
+The weight calibration strategy in this pipeline is inspired by the principles of **Weight Space Programming** introduced by Rikiya Takahashi [1], demonstrating how manipulating parameter trajectories and calibration vectors can reshape generative outputs and trade-offs without requiring computationally intensive full-model retraining.
+
+---
+
+## References
+
+1. **Rikiya Takahashi**, *"Weight Space Programming"*, 2024. [https://rikiyat.github.io/blog/weight-space-programming/](https://rikiyat.github.io/blog/weight-space-programming/)
+2. **Xintao Wang, Yu Li, Honglun Zhang, Ying Shan**, *"Towards Real-World Blind Face Restoration with Generative Facial Prior"*, IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2021.
+3. **Xintao Wang, Liangbin Xie, Chao Dong, Ying Shan**, *"Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data"*, IEEE/CVF International Conference on Computer Vision Workshops (ICCVW), 2021.
+4. **Shangchen Zhou, Kelvin C.K. Chan, Chongyi Li, Chen Change Loy**, *"Towards Robust Blind Face Restoration with Codebook Lookup Transformer"*, Advances in Neural Information Processing Systems (NeurIPS), 2022.
+5. **Jiankang Deng, Jia Guo, Evangelos Ververas, Irene Kotsia, Stefanos Zafeiriou**, *"RetinaFace: Single-shot Multi-level Face Localisation in the Wild"*, IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020.
