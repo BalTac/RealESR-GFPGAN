@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Tools
+.venv/
+env/
+venv/
+.uv/
+.gemini/
+*.log
+
+# Personal files - STRICT PRIVACY EXCLUSION
+*Foto_3*
+inputs/whole_imgs/Foto_3.jpg
+results/*Foto_3*
+results/**/Foto_3*
+
+# Temporary source archives
+CodeFormer_src/
+
+# Large Pre-trained Model Checkpoints (>100MB cannot be pushed to standard GitHub without Git LFS)
+*.pth
+*.pt
+experiments/pretrained_models/*.pth
+gfpgan/weights/*.pth
+weights/**/*.pth
+
+# OS specific
+.DS_Store
+Thumbs.db

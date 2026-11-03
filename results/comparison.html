@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GFPGAN v1.4 - Confronto Visivo Pixel-Aligned (Originale vs Baseline vs Calibrato)</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #151f32;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --border: #22324d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+    }
+    header {
+      max-width: 1720px;
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    p.subtitle { color: var(--muted); font-size: 0.95rem; }
+    
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { border-color: var(--accent); color: #fff; }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #090d16;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+    .tab-btn.featured {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    .tab-btn.featured.active {
+      background: var(--accent-green);
+      color: #090d16;
+    }
+
+    .container {
+      max-width: 1720px;
+      margin: 0 auto;
+    }
+
+    .gallery-panel {
+      display: none;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .gallery-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-header {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 26px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .row-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .row-header .row-num {
+      background: var(--accent);
+      color: #090d16;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
+    /* Top Row: Original Full or Duo */
+    .row-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 960px) {
+      .row-top { grid-template-columns: 1fr; }
+    }
+
+    /* 2-Column Comparison Row */
+    .row-duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 960px) {
+      .row-duo { grid-template-columns: 1fr; }
+    }
+
+    .meta-box {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+    .meta-title { font-size: 1.15rem; font-weight: 800; color: #fff; }
+    .meta-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .meta-list { display: flex; flex-direction: column; gap: 8px; }
+    .meta-item { display: flex; justify-content: space-between; font-size: 0.82rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+    .meta-label { color: var(--muted); }
+    .meta-val { color: #fff; font-weight: 600; font-family: monospace; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.7);
+    }
+    .card-title { font-weight: 700; font-size: 0.92rem; }
+    .badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-orig { background: #334155; color: #e2e8f0; }
+    .badge-base { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+    .badge-calib { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+    .badge-cf { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid #c084fc; }
+    .badge-hybrid { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #38bdf8; }
+
+    .card-footer {
+      padding: 12px 16px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.4);
+      min-height: 60px;
+    }
+
+    /* Static Frame */
+    .static-frame {
+      position: relative;
+      height: 480px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .static-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Pixel-Aligned Comparison Slider Container using clip-path */
+    .slider-frame {
+      position: relative;
+      height: 480px;
+      background: #000;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: ew-resize;
+    }
+    
+    /* Both images remain 100% width and height at all times - ZERO resizing or distortion */
+    .slider-frame img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    /* Bottom / Right Image */
+    .slider-frame .img-under {
+      z-index: 1;
+    }
+
+    /* Top / Left Image (Clipped dynamically by slider position) */
+    .slider-frame .img-over {
+      z-index: 2;
+      clip-path: inset(0 calc(100% - var(--split-pos, 50%)) 0 0);
+    }
+    
+    /* Divider Bar */
+    .slider-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--split-pos, 50%);
+      width: 2px;
+      background: #fff;
+      z-index: 4;
+      pointer-events: none;
+      box-shadow: 0 0 8px rgba(0,0,0,0.8);
+    }
+    .slider-divider::after {
+      content: "◀ ▶";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 38px;
+      height: 38px;
+      background: #fff;
+      color: #090d16;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    }
+
+    .slider-tag {
+      position: absolute;
+      bottom: 12px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 5;
+      pointer-events: none;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .tag-left { left: 12px; }
+    .tag-right { right: 12px; }
+
+    .btn-fullscreen {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 6;
+      transition: all 0.2s ease;
+    }
+    .btn-fullscreen:hover { background: var(--accent); color: #090d16; }
+
+    /* Fullscreen Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 8, 15, 0.97);
+      z-index: 99999;
+      flex-direction: column;
+    }
+    .modal.active { display: flex; }
+
+    .modal-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+    }
+    .modal-title-wrap { display: flex; align-items: center; gap: 16px; }
+    .modal-title { font-weight: 700; font-size: 1rem; color: #fff; }
+    .modal-select {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .modal-close {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .modal-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal .slider-frame {
+      width: 100%;
+      height: 100%;
+      max-width: 1600px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GFPGAN Calibrato vs CodeFormer vs Mix Real-ESRGAN</h1>
+    <p class="subtitle">Confronto avanzato: <strong>Riga 1</strong> (Originale) • <strong>Riga 2</strong> (GFPGAN Standard vs Calibrato) • <strong>Riga 3</strong> (CodeFormer & Mix Real-ESRGAN+GFPGAN)</p>
+    
+    <div class="nav-tabs">
+      <button class="tab-btn featured active" onclick="showTab('foto3', this)">✨ Foto_3 (640×480)</button>
+      <button class="tab-btn" onclick="showTab('blake', this)">Blake Lively</button>
+      <button class="tab-btn" onclick="showTab('group', this)">Gruppo 10045</button>
+      <button class="tab-btn" onclick="showTab('vintage', this)">Vintage 00</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ==================== 1. FOTO_3 ==================== -->
+    <div id="panel-foto3" class="gallery-panel active">
+      
+      <!-- RIGA 1: ORIGINALE IN CIMA -->
+      <div class="row-header"><span class="row-num">1</span> Foto Originale (Input Sorgente)</div>
+      <div class="row-top">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Foto_3 Sorgente</span>
+            <span class="badge badge-orig">Originale 640×480</span>
+          </div>
+          <div class="static-frame">
+            <img src="../inputs/whole_imgs/Foto_3.jpg" alt="Foto_3 Originale">
+          </div>
+        </div>
+        <div class="card meta-box">
+          <div class="meta-title">Diagnosi Degradazione</div>
+          <div class="meta-desc">Scatto a bassa risoluzione con sfocatura da movimento e perdita di dettagli fini cutanei. I contorni di occhi e labbra sono ammorbiditi dalla compressione.</div>
+          <div class="meta-list">
+            <div class="meta-item"><span class="meta-label">Risoluzione Input</span><span class="meta-val">640 × 480 px</span></div>
+            <div class="meta-item"><span class="meta-label">Risoluzione Output Upscale</span><span class="meta-val">1280 × 960 px (2×)</span></div>
+            <div class="meta-item"><span class="meta-label">Dimensione File</span><span class="meta-val">29.1 KB (JPEG)</span></div>
+            <div class="meta-item"><span class="meta-label">Volti Rilevati</span><span class="meta-val">1 volto principale</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGA 2: RISULTATI GFPGAN -->
+      <div class="row-header"><span class="row-num">2</span> Risultati GFPGAN (Standard Baseline vs Calibrato Anti-Plastic)</div>
+      <div class="row-duo">
+        <!-- Slider 1: Originale vs Baseline -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Originale ⟷ Baseline GFPGAN</span>
+            <span class="badge badge-base">Standard 1280×960</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-f3-base">
+            <button class="btn-fullscreen" onclick="openModal('Foto_3: Originale vs Baseline GFPGAN', '../inputs/whole_imgs/Foto_3.jpg', 'baseline/baseline_Foto_3.jpg', 'ORIGINALE', 'BASELINE GFPGAN')">⛶ Fullscreen</button>
+            <img class="img-under" src="baseline/baseline_Foto_3.jpg" alt="Baseline">
+            <img class="img-over" src="../inputs/whole_imgs/Foto_3.jpg" alt="Originale">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ ORIGINALE</span>
+            <span class="slider-tag tag-right">BASELINE ▶</span>
+          </div>
+          <div class="card-footer">GFPGAN standard ripristina la forma ma introduce la tipica texture liscia "a bambola di cera".</div>
+        </div>
+
+        <!-- Slider 2: Baseline vs Calibrato -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Baseline ⟷ GFPGAN Calibrato</span>
+            <span class="badge badge-calib">Micro-Texture + Lanczos</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-f3-calib">
+            <button class="btn-fullscreen" onclick="openModal('Foto_3: Baseline vs GFPGAN Calibrato', 'baseline/baseline_Foto_3.jpg', 'calibrated/calibrated_Foto_3.jpg', 'BASELINE GFPGAN', 'GFPGAN CALIBRATO')">⛶ Fullscreen</button>
+            <img class="img-under" src="calibrated/calibrated_Foto_3.jpg" alt="Calibrated">
+            <img class="img-over" src="baseline/baseline_Foto_3.jpg" alt="Baseline">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ BASELINE (Waxy)</span>
+            <span class="slider-tag tag-right">CALIBRATO (Texture) ▶</span>
+          </div>
+          <div class="card-footer">Iniezione controllata di micro-grana ad alta frequenza per recuperare i pori e cancellare l'effetto plastica.</div>
+        </div>
+      </div>
+
+      <!-- RIGA 3: CODEFORMER & MIX REAL-ESRGAN -->
+      <div class="row-header"><span class="row-num">3</span> Alternative e Mix Sfondo (Confronto diretto con GFPGAN Calibrato)</div>
+      <div class="row-duo">
+        <!-- Slider 3: Calibrato vs CodeFormer -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ CodeFormer</span>
+            <span class="badge badge-cf">CodeFormer (VQGAN)</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-f3-cf">
+            <button class="btn-fullscreen" onclick="openModal('Foto_3: GFPGAN Calibrato vs CodeFormer', 'calibrated/calibrated_Foto_3.jpg', 'codeformer/codeformer_Foto_3.jpg', 'GFPGAN CALIBRATO', 'CODEFORMER')">⛶ Fullscreen</button>
+            <img class="img-under" src="codeformer/codeformer_Foto_3.jpg" alt="CodeFormer">
+            <img class="img-over" src="calibrated/calibrated_Foto_3.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">CODEFORMER ▶</span>
+          </div>
+          <div class="card-footer">CodeFormer ricostruisce con grande acuità (es. iridi e capelli) ma tende a ridefinire i tratti originali.</div>
+        </div>
+
+        <!-- Slider 4: Calibrato vs Mix RealESRGAN+GFPGAN -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ Mix Real-ESRGAN + GFPGAN</span>
+            <span class="badge badge-hybrid">RealESRGAN BG + Soft Mask</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-f3-hybrid">
+            <button class="btn-fullscreen" onclick="openModal('Foto_3: GFPGAN Calibrato vs Mix Real-ESRGAN+GFPGAN', 'calibrated/calibrated_Foto_3.jpg', 'hybrid/hybrid_Foto_3.jpg', 'GFPGAN CALIBRATO', 'MIX REAL-ESRGAN+GFPGAN')">⛶ Fullscreen</button>
+            <img class="img-under" src="hybrid/hybrid_Foto_3.jpg" alt="Hybrid RealESRGAN + GFPGAN">
+            <img class="img-over" src="calibrated/calibrated_Foto_3.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">MIX REAL-ESRGAN ▶</span>
+          </div>
+          <div class="card-footer"><strong>Pipeline Ibrida:</strong> viso calibrato con massima fedeltà biologica + sfondo e vestiti super-risolti da Real-ESRGAN con fusione morbida.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== 2. BLAKE LIVELY ==================== -->
+    <div id="panel-blake" class="gallery-panel">
+      
+      <!-- RIGA 1: ORIGINALE IN CIMA -->
+      <div class="row-header"><span class="row-num">1</span> Foto Originale (Input Sorgente)</div>
+      <div class="row-top">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Blake Lively Sorgente</span>
+            <span class="badge badge-orig">Originale 700×464</span>
+          </div>
+          <div class="static-frame">
+            <img src="../inputs/whole_imgs/Blake_Lively.jpg" alt="Blake Originale">
+          </div>
+        </div>
+        <div class="card meta-box">
+          <div class="meta-title">Diagnosi Degradazione</div>
+          <div class="meta-desc">Ritratto con artefatti da compressione JPEG, perdita di micro-contrasto cutaneo e sfondo con sfocatura ottica da preservare.</div>
+          <div class="meta-list">
+            <div class="meta-item"><span class="meta-label">Risoluzione Input</span><span class="meta-val">700 × 464 px</span></div>
+            <div class="meta-item"><span class="meta-label">Risoluzione Output Upscale</span><span class="meta-val">1400 × 928 px (2×)</span></div>
+            <div class="meta-item"><span class="meta-label">Dimensione File</span><span class="meta-val">42.8 KB (JPEG)</span></div>
+            <div class="meta-item"><span class="meta-label">Volti Rilevati</span><span class="meta-val">1 volto principale (2 bounding boxes)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGA 2: RISULTATI GFPGAN -->
+      <div class="row-header"><span class="row-num">2</span> Risultati GFPGAN (Standard Baseline vs Calibrato Anti-Plastic)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Originale ⟷ Baseline GFPGAN</span>
+            <span class="badge badge-base">Standard 1400×928</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-bl-base">
+            <button class="btn-fullscreen" onclick="openModal('Blake Lively: Originale vs Baseline', '../inputs/whole_imgs/Blake_Lively.jpg', 'baseline/baseline_Blake_Lively.jpg', 'ORIGINALE', 'BASELINE')">⛶ Fullscreen</button>
+            <img class="img-under" src="baseline/baseline_Blake_Lively.jpg" alt="Baseline">
+            <img class="img-over" src="../inputs/whole_imgs/Blake_Lively.jpg" alt="Originale">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ ORIGINALE</span>
+            <span class="slider-tag tag-right">BASELINE ▶</span>
+          </div>
+          <div class="card-footer">GFPGAN standard applica la prior generativa su iridi e contorni, ma rende la pelle eccessivamente liscia.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Baseline ⟷ GFPGAN Calibrato</span>
+            <span class="badge badge-calib">Micro-Texture + Lanczos</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-bl-calib">
+            <button class="btn-fullscreen" onclick="openModal('Blake Lively: Baseline vs Calibrato', 'baseline/baseline_Blake_Lively.jpg', 'calibrated/calibrated_Blake_Lively.jpg', 'BASELINE', 'CALIBRATO')">⛶ Fullscreen</button>
+            <img class="img-under" src="calibrated/calibrated_Blake_Lively.jpg" alt="Calibrated">
+            <img class="img-over" src="baseline/baseline_Blake_Lively.jpg" alt="Baseline">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ BASELINE</span>
+            <span class="slider-tag tag-right">CALIBRATO ▶</span>
+          </div>
+          <div class="card-footer">Rottura dell'effetto bambola di porcellana e restituzione del tono biologico della pelle.</div>
+        </div>
+      </div>
+
+      <!-- RIGA 3: CODEFORMER & MIX REAL-ESRGAN -->
+      <div class="row-header"><span class="row-num">3</span> Alternative e Mix Sfondo (Confronto diretto con GFPGAN Calibrato)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ CodeFormer</span>
+            <span class="badge badge-cf">CodeFormer (VQGAN)</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-bl-cf">
+            <button class="btn-fullscreen" onclick="openModal('Blake Lively: Calibrato vs CodeFormer', 'calibrated/calibrated_Blake_Lively.jpg', 'codeformer/codeformer_Blake_Lively.jpg', 'CALIBRATO GFPGAN', 'CODEFORMER')">⛶ Fullscreen</button>
+            <img class="img-under" src="codeformer/codeformer_Blake_Lively.jpg" alt="CodeFormer">
+            <img class="img-over" src="calibrated/calibrated_Blake_Lively.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">CODEFORMER ▶</span>
+          </div>
+          <div class="card-footer">CodeFormer aumenta il contrasto delle ciglia e ridefinisce i lineamenti con un codebook discreto.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ Mix Real-ESRGAN + GFPGAN</span>
+            <span class="badge badge-hybrid">RealESRGAN BG + Soft Mask</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-bl-hybrid">
+            <button class="btn-fullscreen" onclick="openModal('Blake Lively: Calibrato vs Mix Real-ESRGAN+GFPGAN', 'calibrated/calibrated_Blake_Lively.jpg', 'hybrid/hybrid_Blake_Lively.jpg', 'GFPGAN CALIBRATO', 'MIX REAL-ESRGAN+GFPGAN')">⛶ Fullscreen</button>
+            <img class="img-under" src="hybrid/hybrid_Blake_Lively.jpg" alt="Hybrid RealESRGAN + GFPGAN">
+            <img class="img-over" src="calibrated/calibrated_Blake_Lively.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">MIX REAL-ESRGAN ▶</span>
+          </div>
+          <div class="card-footer"><strong>Pipeline Ibrida:</strong> viso naturale calibrato + sfondo e capelli rifiniti senza scalettature da Real-ESRGAN.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== 3. GRUPPO 10045 ==================== -->
+    <div id="panel-group" class="gallery-panel">
+      
+      <!-- RIGA 1: ORIGINALE IN CIMA -->
+      <div class="row-header"><span class="row-num">1</span> Foto Originale (Input Sorgente)</div>
+      <div class="row-top">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Gruppo 10045 Sorgente</span>
+            <span class="badge badge-orig">Originale 546×800</span>
+          </div>
+          <div class="static-frame">
+            <img src="../inputs/whole_imgs/10045.png" alt="Gruppo Originale">
+          </div>
+        </div>
+        <div class="card meta-box">
+          <div class="meta-title">Diagnosi Degradazione</div>
+          <div class="meta-desc">Scatto di gruppo a scala ridotta con più volti distanti, sfocatura ambientale e pattern di sfondo complessi.</div>
+          <div class="meta-list">
+            <div class="meta-item"><span class="meta-label">Risoluzione Input</span><span class="meta-val">546 × 800 px</span></div>
+            <div class="meta-item"><span class="meta-label">Risoluzione Output Upscale</span><span class="meta-val">1092 × 1600 px (2×)</span></div>
+            <div class="meta-item"><span class="meta-label">Dimensione File</span><span class="meta-val">681 KB (PNG)</span></div>
+            <div class="meta-item"><span class="meta-label">Volti Rilevati</span><span class="meta-val">3–4 volti multi-scala</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGA 2: RISULTATI GFPGAN -->
+      <div class="row-header"><span class="row-num">2</span> Risultati GFPGAN (Standard Baseline vs Calibrato Anti-Plastic)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Originale ⟷ Baseline GFPGAN</span>
+            <span class="badge badge-base">Standard 1092×1600</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-gr-base">
+            <button class="btn-fullscreen" onclick="openModal('Gruppo 10045: Originale vs Baseline', '../inputs/whole_imgs/10045.png', 'baseline/baseline_10045.png', 'ORIGINALE', 'BASELINE')">⛶ Fullscreen</button>
+            <img class="img-under" src="baseline/baseline_10045.png" alt="Baseline">
+            <img class="img-over" src="../inputs/whole_imgs/10045.png" alt="Originale">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ ORIGINALE</span>
+            <span class="slider-tag tag-right">BASELINE ▶</span>
+          </div>
+          <div class="card-footer">Ricostruzione dei volti con stacco netto e artefatti di deconvoluzione visibili sullo sfondo standard.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Baseline ⟷ GFPGAN Calibrato</span>
+            <span class="badge badge-calib">Anti-Plastic + Lanczos</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-gr-calib">
+            <button class="btn-fullscreen" onclick="openModal('Gruppo 10045: Baseline vs Calibrato', 'baseline/baseline_10045.png', 'calibrated/calibrated_10045.png', 'BASELINE', 'CALIBRATO')">⛶ Fullscreen</button>
+            <img class="img-under" src="calibrated/calibrated_10045.png" alt="Calibrated">
+            <img class="img-over" src="baseline/baseline_10045.png" alt="Baseline">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ BASELINE</span>
+            <span class="slider-tag tag-right">CALIBRATO ▶</span>
+          </div>
+          <div class="card-footer">Alpha-blend morbido continuo attorno ai volti e ricampionamento Lanczos-4 pulito.</div>
+        </div>
+      </div>
+
+      <!-- RIGA 3: CODEFORMER & MIX REAL-ESRGAN -->
+      <div class="row-header"><span class="row-num">3</span> Alternative e Mix Sfondo (Confronto diretto con GFPGAN Calibrato)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ CodeFormer</span>
+            <span class="badge badge-cf">CodeFormer (VQGAN)</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-gr-cf">
+            <button class="btn-fullscreen" onclick="openModal('Gruppo 10045: Calibrato vs CodeFormer', 'calibrated/calibrated_10045.png', 'codeformer/codeformer_10045.png', 'CALIBRATO GFPGAN', 'CODEFORMER')">⛶ Fullscreen</button>
+            <img class="img-under" src="codeformer/codeformer_10045.png" alt="CodeFormer">
+            <img class="img-over" src="calibrated/calibrated_10045.png" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">CODEFORMER ▶</span>
+          </div>
+          <div class="card-footer">CodeFormer definisce molto bene i volti distanti ma altera la resa prospettica della scena.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ Mix Real-ESRGAN + GFPGAN</span>
+            <span class="badge badge-hybrid">RealESRGAN BG + Soft Mask</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-gr-hybrid">
+            <button class="btn-fullscreen" onclick="openModal('Gruppo 10045: Calibrato vs Mix Real-ESRGAN+GFPGAN', 'calibrated/calibrated_10045.png', 'hybrid/hybrid_10045.png', 'GFPGAN CALIBRATO', 'MIX REAL-ESRGAN+GFPGAN')">⛶ Fullscreen</button>
+            <img class="img-under" src="hybrid/hybrid_10045.png" alt="Hybrid RealESRGAN + GFPGAN">
+            <img class="img-over" src="calibrated/calibrated_10045.png" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">MIX REAL-ESRGAN ▶</span>
+          </div>
+          <div class="card-footer"><strong>Pipeline Ibrida:</strong> sfondo della scena valorizzato da Real-ESRGAN con volti calibrati privi di stacchi a gradino.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== 4. VINTAGE 00 ==================== -->
+    <div id="panel-vintage" class="gallery-panel">
+      
+      <!-- RIGA 1: ORIGINALE IN CIMA -->
+      <div class="row-header"><span class="row-num">1</span> Foto Originale (Input Sorgente)</div>
+      <div class="row-top">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Vintage 00 Sorgente</span>
+            <span class="badge badge-orig">Originale 540×800</span>
+          </div>
+          <div class="static-frame">
+            <img src="../inputs/whole_imgs/00.jpg" alt="Vintage Originale">
+          </div>
+        </div>
+        <div class="card meta-box">
+          <div class="meta-title">Diagnosi Degradazione</div>
+          <div class="meta-desc">Ritratto fotografico storico con grana argentica d'epoca, graffi, degradazione chimica e forte sgranatura.</div>
+          <div class="meta-list">
+            <div class="meta-item"><span class="meta-label">Risoluzione Input</span><span class="meta-val">540 × 800 px</span></div>
+            <div class="meta-item"><span class="meta-label">Risoluzione Output Upscale</span><span class="meta-val">1080 × 1600 px (2×)</span></div>
+            <div class="meta-item"><span class="meta-label">Dimensione File</span><span class="meta-val">58.4 KB (JPEG)</span></div>
+            <div class="meta-item"><span class="meta-label">Volti Rilevati</span><span class="meta-val">1 volto principale</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGA 2: RISULTATI GFPGAN -->
+      <div class="row-header"><span class="row-num">2</span> Risultati GFPGAN (Standard Baseline vs Calibrato Anti-Plastic)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Originale ⟷ Baseline GFPGAN</span>
+            <span class="badge badge-base">Standard 1080×1600</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-vt-base">
+            <button class="btn-fullscreen" onclick="openModal('Vintage 00: Originale vs Baseline', '../inputs/whole_imgs/00.jpg', 'baseline/baseline_00.jpg', 'ORIGINALE', 'BASELINE')">⛶ Fullscreen</button>
+            <img class="img-under" src="baseline/baseline_00.jpg" alt="Baseline">
+            <img class="img-over" src="../inputs/whole_imgs/00.jpg" alt="Originale">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ ORIGINALE</span>
+            <span class="slider-tag tag-right">BASELINE ▶</span>
+          </div>
+          <div class="card-footer">Cancellazione totale della grana storica con effetto porcellana artefatto.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Baseline ⟷ GFPGAN Calibrato</span>
+            <span class="badge badge-calib">Anti-Plastic + Lanczos</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-vt-calib">
+            <button class="btn-fullscreen" onclick="openModal('Vintage 00: Baseline vs Calibrato', 'baseline/baseline_00.jpg', 'calibrated/calibrated_00.jpg', 'BASELINE', 'CALIBRATO')">⛶ Fullscreen</button>
+            <img class="img-under" src="calibrated/calibrated_00.jpg" alt="Calibrated">
+            <img class="img-over" src="baseline/baseline_00.jpg" alt="Baseline">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ BASELINE</span>
+            <span class="slider-tag tag-right">CALIBRATO ▶</span>
+          </div>
+          <div class="card-footer">Mantenimento della granulosità storica e sfumatura naturale dei bordi.</div>
+        </div>
+      </div>
+
+      <!-- RIGA 3: CODEFORMER & MIX REAL-ESRGAN -->
+      <div class="row-header"><span class="row-num">3</span> Alternative e Mix Sfondo (Confronto diretto con GFPGAN Calibrato)</div>
+      <div class="row-duo">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ CodeFormer</span>
+            <span class="badge badge-cf">CodeFormer (VQGAN)</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-vt-cf">
+            <button class="btn-fullscreen" onclick="openModal('Vintage 00: Calibrato vs CodeFormer', 'calibrated/calibrated_00.jpg', 'codeformer/codeformer_00.jpg', 'CALIBRATO GFPGAN', 'CODEFORMER')">⛶ Fullscreen</button>
+            <img class="img-under" src="codeformer/codeformer_00.jpg" alt="CodeFormer">
+            <img class="img-over" src="calibrated/calibrated_00.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">CODEFORMER ▶</span>
+          </div>
+          <div class="card-footer">CodeFormer recupera l'acuità oculare ma ridisegna l'iride in modo talvolta anacronistico.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">GFPGAN Calibrato ⟷ Mix Real-ESRGAN + GFPGAN</span>
+            <span class="badge badge-hybrid">RealESRGAN BG + Soft Mask</span>
+          </div>
+          <div class="slider-frame" data-slider id="sl-vt-hybrid">
+            <button class="btn-fullscreen" onclick="openModal('Vintage 00: Calibrato vs Mix Real-ESRGAN+GFPGAN', 'calibrated/calibrated_00.jpg', 'hybrid/hybrid_00.jpg', 'GFPGAN CALIBRATO', 'MIX REAL-ESRGAN+GFPGAN')">⛶ Fullscreen</button>
+            <img class="img-under" src="hybrid/hybrid_00.jpg" alt="Hybrid RealESRGAN + GFPGAN">
+            <img class="img-over" src="calibrated/calibrated_00.jpg" alt="Calibrato">
+            <div class="slider-divider"></div>
+            <span class="slider-tag tag-left">◀ CALIBRATO</span>
+            <span class="slider-tag tag-right">MIX REAL-ESRGAN ▶</span>
+          </div>
+          <div class="card-footer"><strong>Pipeline Ibrida:</strong> texture dello sfondo d'epoca esaltata senza rimuovere la patina storica del ritratto.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FULLSCREEN MODAL CON SLIDER FUNZIONANTE A SCHERMO INTERO -->
+  <div id="modal-view" class="modal">
+    <div class="modal-bar">
+      <div class="modal-title-wrap">
+        <span id="modal-title" class="modal-title">Confronto Fullscreen</span>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕ Chiudi (Esc)</button>
+    </div>
+    <div class="modal-body">
+      <div class="slider-frame" id="modal-slider">
+        <img id="modal-img-under" class="img-under" src="" alt="Under">
+        <img id="modal-img-over" class="img-over" src="" alt="Over">
+        <div class="slider-divider"></div>
+        <span id="modal-tag-left" class="slider-tag tag-left">◀ PRIMA</span>
+        <span id="modal-tag-right" class="slider-tag tag-right">DOPO ▶</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function showTab(tabId, el) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.gallery-panel').forEach(panel => panel.classList.remove('active'));
+      
+      const targetPanel = document.getElementById('panel-' + tabId);
+      if (targetPanel) targetPanel.classList.add('active');
+      if (el) {
+        el.classList.add('active');
+      } else if (window.event && window.event.target) {
+        window.event.target.classList.add('active');
+      }
+    }
+
+    // Clip-path Based Slider Engine - ZERO RESIZING OF IMAGES
+    function setupSlider(slider) {
+      let isDragging = false;
+
+      function update(clientX) {
+        const rect = slider.getBoundingClientRect();
+        let pos = (clientX - rect.left) / rect.width;
+        if (pos < 0.01) pos = 0.01;
+        if (pos > 0.99) pos = 0.99;
+        const pct = (pos * 100).toFixed(2) + '%';
+        slider.style.setProperty('--split-pos', pct);
+      }
+
+      slider.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('button') || e.target.closest('.btn-fullscreen')) {
+          return;
+        }
+        isDragging = true;
+        slider.setPointerCapture(e.pointerId);
+        update(e.clientX);
+      });
+
+      slider.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        update(e.clientX);
+      });
+
+      slider.addEventListener('pointerup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { slider.releasePointerCapture(e.pointerId); } catch (_) {}
+      });
+
+      slider.addEventListener('pointercancel', () => { isDragging = false; });
+
+      // Stop pointerdown from bubbling on all buttons inside slider
+      slider.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('pointerdown', (e) => e.stopPropagation());
+      });
+
+      // Double-click to open fullscreen
+      slider.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.btn-fullscreen') || e.target.closest('button')) return;
+        const btn = slider.querySelector('.btn-fullscreen');
+        if (btn) btn.click();
+      });
+    }
+
+    // Initialize all sliders on page
+    document.querySelectorAll('[data-slider]').forEach(setupSlider);
+    const modalSlider = document.getElementById('modal-slider');
+    if (modalSlider) setupSlider(modalSlider);
+
+    // Fullscreen Modal
+    const modal = document.getElementById('modal-view');
+    const modalTitle = document.getElementById('modal-title');
+    const modalImgUnder = document.getElementById('modal-img-under');
+    const modalImgOver = document.getElementById('modal-img-over');
+    const modalTagLeft = document.getElementById('modal-tag-left');
+    const modalTagRight = document.getElementById('modal-tag-right');
+
+    function openModal(title, leftSrc, rightSrc, leftLabel, rightLabel) {
+      modalTitle.innerText = title;
+      modalImgOver.src = leftSrc;     // Clipped (left)
+      modalImgUnder.src = rightSrc;   // Underneath (right)
+      modalTagLeft.innerText = '◀ ' + leftLabel;
+      modalTagRight.innerText = rightLabel + ' ▶';
+      modalSlider.style.setProperty('--split-pos', '50%');
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

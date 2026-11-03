@@ -1,0 +1,192 @@
+{
+  "communities": {
+    "0": [
+      "agents_skills_llm_wiki_scripts_check_evidence_contains",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_261",
+      "agents_skills_llm_wiki_scripts_check_evidence_raw_links_of",
+      "agents_skills_llm_wiki_scripts_fetch_article",
+      "html",
+      "os",
+      "re",
+      "urllib_request"
+    ],
+    "1": [
+      "agents_skills_llm_wiki_scripts_check_evidence_candidate",
+      "agents_skills_llm_wiki_scripts_check_evidence_extract_candidates",
+      "agents_skills_llm_wiki_scripts_check_evidence_extract_candidates_flush_blockquote",
+      "agents_skills_llm_wiki_scripts_check_evidence_extract_candidates_flush_paragraph",
+      "agents_skills_llm_wiki_scripts_check_evidence_extract_numeric_date_candidates",
+      "agents_skills_llm_wiki_scripts_check_evidence_normalize",
+      "agents_skills_llm_wiki_scripts_check_evidence_strip_noise"
+    ],
+    "2": [
+      "agents_skills_llm_wiki_scripts_check_evidence_iter_articles",
+      "agents_skills_llm_wiki_scripts_check_evidence_main",
+      "agents_skills_llm_wiki_scripts_check_evidence_main_label",
+      "agents_skills_llm_wiki_scripts_check_evidence_no_material_paths",
+      "agents_skills_llm_wiki_scripts_check_evidence_referenced_raws",
+      "agents_skills_llm_wiki_scripts_check_evidence_unreferenced_raws",
+      "path"
+    ],
+    "3": [
+      "agents_skills_llm_wiki_scripts_check_evidence",
+      "agents_skills_llm_wiki_scripts_check_evidence_keep_number",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_2",
+      "dataclasses",
+      "pathlib",
+      "sys"
+    ],
+    "4": [
+      "agents_skills_llm_wiki_scripts_check_evidence_check_article",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_283",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_291",
+      "agents_skills_llm_wiki_scripts_check_evidence_source_content"
+    ],
+    "5": [
+      "agents_skills_llm_wiki_scripts_check_evidence_document",
+      "agents_skills_llm_wiki_scripts_check_evidence_fence_opener",
+      "agents_skills_llm_wiki_scripts_check_evidence_parse_document",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_97"
+    ],
+    "6": [
+      "agents_skills_llm_wiki_scripts_check_evidence_is_fence_closer",
+      "agents_skills_llm_wiki_scripts_check_evidence_rationale_150",
+      "agents_skills_llm_wiki_scripts_check_evidence_strip_fences"
+    ]
+  },
+  "cohesion": {
+    "0": 0.25,
+    "1": 0.5238095238095238,
+    "2": 0.47619047619047616,
+    "3": 0.3333333333333333,
+    "4": 0.5,
+    "5": 0.5,
+    "6": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_check_article",
+      "label": "check_article()",
+      "degree": 11
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_parse_document",
+      "label": "parse_document()",
+      "degree": 9
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_extract_candidates",
+      "label": "extract_candidates()",
+      "degree": 8
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_candidate",
+      "label": "Candidate",
+      "degree": 7
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_raw_links_of",
+      "label": "raw_links_of()",
+      "degree": 6
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_source_content",
+      "label": "source_content()",
+      "degree": 6
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_normalize",
+      "label": "normalize()",
+      "degree": 5
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_extract_numeric_date_candidates",
+      "label": "extract_numeric_date_candidates()",
+      "degree": 5
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_main",
+      "label": "main()",
+      "degree": 5
+    },
+    {
+      "id": "agents_skills_llm_wiki_scripts_check_evidence_referenced_raws",
+      "label": "referenced_raws()",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "check_article()",
+      "target": "Candidate",
+      "source_files": [
+        ".agents/skills/llm-wiki/scripts/check_evidence.py",
+        ".agents/skills/llm-wiki/scripts/check_evidence.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "note": "Bridges community 1 → community 4"
+    },
+    {
+      "source": "contains()",
+      "target": "Candidate",
+      "source_files": [
+        ".agents/skills/llm-wiki/scripts/check_evidence.py",
+        ".agents/skills/llm-wiki/scripts/check_evidence.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "note": "Bridges community 1 → community 0"
+    },
+    {
+      "source": "check_article()",
+      "target": "parse_document()",
+      "source_files": [
+        ".agents/skills/llm-wiki/scripts/check_evidence.py",
+        ".agents/skills/llm-wiki/scripts/check_evidence.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "note": "Bridges community 5 → community 4"
+    },
+    {
+      "source": "extract_candidates()",
+      "target": "parse_document()",
+      "source_files": [
+        ".agents/skills/llm-wiki/scripts/check_evidence.py",
+        ".agents/skills/llm-wiki/scripts/check_evidence.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "note": "Bridges community 5 → community 1"
+    },
+    {
+      "source": "parse_document()",
+      "target": "is_fence_closer()",
+      "source_files": [
+        ".agents/skills/llm-wiki/scripts/check_evidence.py",
+        ".agents/skills/llm-wiki/scripts/check_evidence.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "note": "Bridges community 5 → community 6"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `check_article()` connect `Community 4` to `Community 0`, `Community 1`, `Community 2`, `Community 3`, `Community 5`?",
+      "why": "High betweenness centrality (0.104) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `parse_document()` connect `Community 5` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 6`?",
+      "why": "High betweenness centrality (0.077) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `raw_links_of()` connect `Community 0` to `Community 2`, `Community 3`, `Community 4`, `Community 5`?",
+      "why": "High betweenness centrality (0.072) - this node is a cross-community bridge."
+    }
+  ]
+}
