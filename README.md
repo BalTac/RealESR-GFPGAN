@@ -85,14 +85,19 @@ The model is distributed as a single unified checkpoint:
 
 ## Installation & Quickstart
 
-### 1. Installation
+### 1. Installation & Pre-trained Weights
 
 ```bash
-git clone https://github.com/your-username/realesr-gfpgan.git
-cd realesr-gfpgan
+git clone https://github.com/BalTac/RealESR-GFPGAN.git
+cd RealESR-GFPGAN
 
-# Install dependencies via uv or pip
+# Install dependencies via pip or uv
 pip install -r requirements.txt
+
+# Download the unified checkpoint (396 MB) from GitHub Releases
+mkdir -p experiments/pretrained_models
+curl -L -o experiments/pretrained_models/RealESR_GFPGAN_v1.pth \
+  https://github.com/BalTac/RealESR-GFPGAN/releases/download/v1.0.0/RealESR_GFPGAN_v1.pth
 ```
 
 ### 2. Python API
