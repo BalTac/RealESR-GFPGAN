@@ -31,3 +31,6 @@ weights/**/*.pth
 # OS specific
 .DS_Store
 Thumbs.db
+
+# evaluation outputs (regenerate with scripts/eval_metrics.py)
+results/metrics/
