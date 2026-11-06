@@ -94,7 +94,8 @@ cd RealESR-GFPGAN
 # Install dependencies via pip or uv
 pip install -r requirements.txt
 
-# Download the unified checkpoint (396 MB) from GitHub Releases
+# v1 code path: download the unified checkpoint (396 MB) from GitHub Releases
+# (the v2 pipeline below can use the separate backbones or the v2 bundle instead)
 mkdir -p experiments/pretrained_models
 curl -L -o experiments/pretrained_models/RealESR_GFPGAN_v1.pth \
   https://github.com/BalTac/RealESR-GFPGAN/releases/download/v1.0.0/RealESR_GFPGAN_v1.pth
@@ -125,6 +126,82 @@ python inference.py --input inputs/whole_imgs/Blake_Lively.jpg --output results/
 
 # Custom fidelity weight and tile size for low-VRAM
 python inference.py -i inputs/whole_imgs/10045.png -o results/group_out.png --weight 0.70 --tile 300
+```
+
+
+---
+
+## v2 pipeline (measured, no basicsr)
+
+The v1 code needs `basicsr` (unmaintained, breaks on modern torchvision) and a single
+hard-wired 23-block RRDBNet. `realesr_gfpgan/pipeline.py` reimplements the same idea
+with a pluggable backbone, loaded through `spandrel`:
+
+```bash
+pip install -r requirements-v2.txt     # torch, spandrel, gfpgan, facexlib, opencv
+
+python restore.py -i inputs/whole_imgs/bicycle_bw.jpg -o results/out.png --scale 2
+python restore.py -i photo.jpg -o out.png --scale 4 --fidelity .7 --alpha .3 --face-mix .8
+python restore.py -i photo.jpg -o out.png --scale 2 --bundle experiments/pretrained_models/RealESR_GFPGAN_v2.pth
+```
+
+What changed, and what it is worth:
+
+| change | effect | measured |
+|---|---|---|
+| `RealESRGAN_x2plus` for `--scale 2` (native 2x instead of 4x + downscale) | 3x faster at the same output size | 1297x1920: upscale 26.6s -> 7.3s, total 37.9s -> 12.7s |
+| fp16 autocast made opt-in (`--half`), off by default | avoids a regression on GPUs without tensor cores | 26s -> 108s on GTX 1660 Ti (Turing TU116) |
+| `--face-mix` (default 0.8) blends the GFPGAN face with the upscaled background inside the mask | less "porcelain" skin, some original grain survives | face region Laplacian var 27.7 -> 21.3, high-frequency std 4.60 -> 3.93 |
+| tiling with overlap accumulator instead of hard seams | no visible grid on large images | tiled vs single pass: mean abs diff 1.70/255 |
+| `spandrel` instead of `basicsr` | no `torchvision.transforms.functional_tensor` monkeypatch, no build breakage | - |
+
+Only permissively licensed weights are bundled or recommended: `RealESRGAN_x2plus` and
+`RealESRGAN_x4plus` (BSD-3, xinntao/Real-ESRGAN) and `GFPGANv1.4` (Apache-2.0, TencentARC).
+`4x-UltraSharp` was used for local 4x tests and is **not** redistributed here: check its own
+licence before bundling it. Pass `--esrgan path/to/any.pth` (anything spandrel understands)
+to use a different backbone.
+
+Defaults for restoration were retuned on a 640x480 scan from 2003: `--fidelity 0.7 --alpha 0.3
+--face-mix 0.8`. The v1 values (`0.6 / 0.2 / 1.0`) give a sharper but waxier face; both are one
+flag away.
+
+### v2 unified checkpoint
+
+`realesr_gfpgan/bundle.py` can pack several backbones into one file:
+
+```python
+from realesr_gfpgan.bundle import create_v2_checkpoint
+create_v2_checkpoint(output_path="experiments/pretrained_models/RealESR_GFPGAN_v2.pth")
+# variants: x2 -> RealESRGAN_x2plus, x4 -> RealESRGAN_x4plus, plus GFPGANv1.4
+```
+
+`RealESR_GFPGAN_v2.pth` is 460 MB (two BSD-3 backbones + GFPGAN v1.4) and is loaded with:
+
+```python
+from realesr_gfpgan import RestorePipeline, load_bundle
+info = load_bundle("RealESR_GFPGAN_v2.pth", device="cpu", prefer="x2")
+pipe = RestorePipeline(esrgan_state=info["state_esrgan"], esrgan_arch=info["arch"], gfpgan="GFPGANv1.4.pth")
+out, faces = pipe.restore(img)
+```
+
+Output is byte-identical to loading the backbones from separate files (`mean |diff| = 0` on the
+test image).
+
+### Reproducibility
+
+```bash
+python scripts/selfcheck.py     # geometry, tiling vs single pass, resize, bundle roundtrip
+python scripts/bench.py --input inputs/whole_imgs/bicycle_bw.jpg --repeat 1
+```
+
+Timings on this machine (GTX 1660 Ti 6 GB, 768x768 input, face pass included):
+
+```
+RealESRGAN_x2plus   scale 2   1536x1536   2.29 s
+4x-UltraSharp       scale 4   3072x3072   7.88 s
+RealESRGAN_x4plus   scale 4   3072x3072   8.03 s
+bundle:x2           scale 2   1536x1536   2.12 s
+bundle:x4           scale 4   3072x3072   8.06 s
 ```
 
 ---
