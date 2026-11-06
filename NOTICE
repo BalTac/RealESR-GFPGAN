@@ -1,0 +1,67 @@
+RealESR-GFPGAN — third-party notices
+====================================
+
+This repository contains code written for this project (Apache-2.0, see LICENSE)
+and, in its GitHub Releases, model weights produced by third parties. Each release
+asset carries the licence of the weights it contains.
+
+1. Code in this repository
+--------------------------
+Licence: Apache License 2.0 (see LICENSE).
+Applies to: realesr_gfpgan/*.py, restore.py, inference.py, scripts/*.py.
+
+2. RealESR_GFPGAN_v2.pth  (commercial use allowed)
+--------------------------------------------------
+Contents:
+  - RealESRGAN_x2plus.pth and RealESRGAN_x4plus.pth
+      Project: Real-ESRGAN — https://github.com/xinntao/Real-ESRGAN
+      Author: Xintao Wang et al.
+      Licence: BSD 3-Clause
+  - GFPGANv1.4.pth
+      Project: GFPGAN — https://github.com/TencentARC/GFPGAN
+      Author: Tencent ARC Lab
+      Licence: Apache License 2.0
+  - bundling/repacking performed by this project (no weight values modified).
+
+Redistribution of this asset must keep the notices above. The code licence
+(Apache-2.0) does not extend to the bundled weights; they stay under their own
+licences, both of which permit commercial use.
+
+3. RealESR_GFPGAN_v2_ultrasharp.pth  (NON-COMMERCIAL)
+-----------------------------------------------------
+Contents:
+  - 4x-UltraSharp.pth
+      Author: Kim2091
+      Source: https://huggingface.co/Kim2091/UltraSharp
+              https://openmodeldb.info/models/4x-UltraSharp
+      Licence: Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+               International (CC BY-NC-SA 4.0) — full text in
+               LICENSE-CC-BY-NC-SA-4.0
+  - GFPGANv1.4.pth (Apache-2.0, see above)
+  - bundling/repacking performed by this project.
+
+Because the bundle incorporates CC BY-NC-SA 4.0 material, the whole asset
+(bundle file) is distributed under CC BY-NC-SA 4.0:
+  - Attribution: Kim2091, 4x-UltraSharp, CC BY-NC-SA 4.0, link above.
+  - Modifications: the weights were not altered; they were packed, together with
+    GFPGANv1.4 weights, into a single PyTorch checkpoint with metadata.
+  - NonCommercial: you may not use this asset for commercial purposes.
+  - ShareAlike: if you redistribute a modified version of this asset, it must
+    carry the same licence.
+
+The Apache-2.0 code in this repository is NOT a derivative work of the model
+weights and is not relicensed by the above. Using the code is not restricted by
+the model licences; distributing or commercially exploiting that particular
+bundle is.
+
+4. Outputs
+----------
+Licences of model weights govern the weights. Whether images produced with a
+non-commercial model may be used commercially is a separate question and is not
+settled by CC licences; if you intend commercial use of the output, use
+RealESR_GFPGAN_v2.pth (permissive weights) instead.
+
+5. Python dependencies
+----------------------
+torch (BSD-3), torchvision (BSD-3), numpy (BSD-3), opencv-python (Apache-2.0),
+spandrel (MIT), gfpgan (Apache-2.0), facexlib (MIT), Pillow (HPND).

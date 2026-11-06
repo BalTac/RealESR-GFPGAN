@@ -155,11 +155,23 @@ What changed, and what it is worth:
 | tiling with overlap accumulator instead of hard seams | no visible grid on large images | tiled vs single pass: mean abs diff 1.70/255 |
 | `spandrel` instead of `basicsr` | no `torchvision.transforms.functional_tensor` monkeypatch, no build breakage | - |
 
-Only permissively licensed weights are bundled or recommended: `RealESRGAN_x2plus` and
-`RealESRGAN_x4plus` (BSD-3, xinntao/Real-ESRGAN) and `GFPGANv1.4` (Apache-2.0, TencentARC).
-`4x-UltraSharp` was used for local 4x tests and is **not** redistributed here: check its own
-licence before bundling it. Pass `--esrgan path/to/any.pth` (anything spandrel understands)
-to use a different backbone.
+### Which bundle / which licence
+
+| file | backbones | size | licence | commercial use |
+|---|---|---|---|---|
+| `RealESR_GFPGAN_v2.pth` | `RealESRGAN_x2plus` (x2), `RealESRGAN_x4plus` (x4) | 460 MB | BSD-3 + Apache-2.0 | **allowed** |
+| `RealESR_GFPGAN_v2_ultrasharp.pth` | `4x-UltraSharp` (x4) | 396 MB | CC BY-NC-SA 4.0 + Apache-2.0 | **not allowed** |
+
+Both are built by `python scripts/make_bundles.py`. The second one needs
+`experiments/pretrained_models/4x-UltraSharp.pth`, which is not redistributed in this
+repository: download it from [Kim2091/UltraSharp](https://huggingface.co/Kim2091/UltraSharp)
+after reading its licence (CC BY-NC-SA 4.0, attribution required).
+
+The code in this repository stays Apache-2.0: CC BY-NC-SA applies to the weights and to the
+bundle, not to a program that loads them. Details, attribution and the full CC text are in
+[NOTICE](NOTICE) and [LICENSE-CC-BY-NC-SA-4.0](LICENSE-CC-BY-NC-SA-4.0).
+
+Pass `--esrgan path/to/any.pth` (anything spandrel understands) to use a different backbone.
 
 Defaults for restoration were retuned on a 640x480 scan from 2003: `--fidelity 0.7 --alpha 0.3
 --face-mix 0.8`. The v1 values (`0.6 / 0.2 / 1.0`) give a sharper but waxier face; both are one
