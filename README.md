@@ -155,6 +155,16 @@ What changed, and what it is worth:
 | tiling with overlap accumulator instead of hard seams | no visible grid on large images | tiled vs single pass: mean abs diff 1.70/255 |
 | `spandrel` instead of `basicsr` | no `torchvision.transforms.functional_tensor` monkeypatch, no build breakage | - |
 
+### Download (v2.0.0 release assets)
+
+```bash
+# commercial use OK — RealESRGAN_x2plus/x4plus (BSD-3) + GFPGANv1.4 (Apache-2.0)
+curl -L -o experiments/pretrained_models/RealESR_GFPGAN_v2.pth   https://github.com/BalTac/RealESR-GFPGAN/releases/download/v2.0.0/RealESR_GFPGAN_v2.pth
+
+# NON-COMMERCIAL — 4x-UltraSharp (CC BY-NC-SA 4.0) + GFPGANv1.4
+curl -L -o experiments/pretrained_models/RealESR_GFPGAN_v2_ultrasharp.pth   https://github.com/BalTac/RealESR-GFPGAN/releases/download/v2.0.0/RealESR_GFPGAN_v2_ultrasharp.pth
+```
+
 ### Which bundle / which licence
 
 | file | backbones | size | licence | commercial use |
